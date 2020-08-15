@@ -1,0 +1,45 @@
+---
+title: "Course Assignment for Week3: Slides and Plotly"
+author: "Mahendra S Payaal"
+date: "8/15/2020"
+output: ioslides_presentation
+---
+
+## Show mtcars data
+
+### sample data shown
+
+```{r dataShow,comments="",echo=FALSE, message = FALSE,warning=FALSE}
+head(mtcars)
+library(plotly)
+```
+## Explain Variables
+### Explain variables used in plot in next slide in different stles
+- wt is  weight of the car
+- *mpg is miles per gallon*
+- **cyl is number of cylinders**
+- hp is horsepower
+
+
+#### Explaination of plot 
+
+-  Next slide will plot the weight of the car against the mileage of the car i.e. is mpg
+- color by number of cylinder
+- size of plots by horsepower
+
+## Show mtcars plot 
+```{r plotShow1,echo=FALSE,fig.cap = " mtcars plot",eval=TRUE}
+plot(mtcars$ wt,mtcars$ mpg,xlab="weight",ylab="miles per gallon")
+```
+
+
+## mtcars in plotly
+```{r plotShow2,echo=FALSE,fig.cap = " mtcars plot",message=FALSE,warning=FALSE}
+plot_ly(mtcars, x = mtcars$wt, y = mtcars$mpg, mode = "markers", 
+        color = as.factor(mtcars$cyl), size = mtcars$hp)
+```
+
+***
+
+Thanks 
+
