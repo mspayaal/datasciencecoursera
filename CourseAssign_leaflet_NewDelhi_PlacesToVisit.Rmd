@@ -1,0 +1,24 @@
+---
+title: "CourseAssign_leaflet_NewDelhi_PlacesToVisit"
+author: "Mahendra S Payaal"
+date: "8/15/2020"
+output: html_document
+keep_md: yes
+---
+## Synopsis
+
+This is an assignment to create an interactive map through Leaflet package. In this project a Map of India has been taken and 6 important places to visit have been added
+
+## Interactive Map 
+```{r interactiveMap}
+library(leaflet)
+my_Delhi <- leaflet() %>% addTiles() %>% addMarkers(lat= c(28.656312,28.593360,28.524768,28.592710,28.631689,28.628073),
+                                                    lng= c(77.238371,77.250749,77.185971,77.216858,77.217218,77.216746),
+                                                    popup = c("Red Fort: Happy  74th Independence Day 15 Aug 2020",
+                                                              "Humayun's Tomb","Qutab Minar","Lodi Gardens","Connaught Place",
+                                                              "Jantar Mantar"))
+my_Delhi
+
+```
+
+The map has six places of interest in New Delhi with the pop up giving the names. The map has been created as an HTML document and published on RPubs and GitHub
