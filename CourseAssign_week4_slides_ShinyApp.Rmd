@@ -1,0 +1,72 @@
+---
+title: "Course Assignment for Week 4 : Shiny Application "
+author: "Mahendra S Payaal"
+date: "8/15/2020"
+output: ioslides_presentation
+runtime: shiny
+---
+
+## Description of the Project
+
+### Explain the functioning
+- This Shiny app is designed to predict the Specie of Iris flower
+- Four predictors are "Sepal.Length", "Sepal.Width, "Petal.Length"   "Petal.Width"
+- Iris data base has been used to train the models   
+- Two selectable models used for prediction: Trees & Random Forest 
+- The three Species predicted: 1= setosa,2= versicolor,3= virginica
+
+## Server side programming
+- Accepting the inputs of the four predictors 
+- converting the inputs to  a data frame  to be used for    
+  prediction
+- creating the two models on 'Trees' and 'Random Forest'
+- Predicting based on the model and inputs
+- Rendering output based on model selected
+
+## Links for app and codes 
+
+-  In the next slide the Shinyapp GUI of the project  can be   
+   seen.Obviously it will not give output as server side cannot be 
+   run interactively in this presentation.
+   
+-  The entire application is at 
+   https://mspayaal.shinyapps.io/courseassign_week4_shiny/
+   
+- The codes for shinyserver and Shinyapp  are at  
+  https://github.com/mspayaal/datasciencecoursera/blob/
+  master/server.R  *and* 
+  https://github.com/mspayaal/datasciencecoursera/
+  blob/master/ui.R respectively
+
+
+ 
+*** 
+```{r UICode,echo= FALSE,eval = TRUE }
+library(shiny)
+shinyUI(fluidPage(
+    titlePanel(""),
+    sidebarLayout(
+        sidebarPanel(
+            sliderInput("Sepal.Length","Provide length of Sepal", 
+                        min = 4.3, max = 7.9,value = 6.0),
+            sliderInput("Sepal.Width","Provide width of Sepal",
+                         min = 2.0, max = 4.4,value = 3.0),
+            sliderInput("Petal.Length","Provide length of Petal",
+                        min = 1.0,max = 6.9,value = 4.0),
+            sliderInput("Petal.Width","Provide length of Petal",
+                        min = 0.1,max = 2.5,value = 1.5),
+               h6("Select model"),
+            checkboxInput("showModel1","Model Trees",value = TRUE),
+            checkboxInput("showModel2", "Model Random Forest ",                value = TRUE),
+            submitButton("Submit")),
+        
+        mainPanel(
+            h6("Predicted Species from Model Trees :"),
+            textOutput("pred1"),
+            h6("Predicted Species from Model Random Forest  :"),
+            textOutput("pred2"),
+            h6(" Reading Predictions for the Iris Species"),
+            h6("1= setosa, 2= versicolor, 3= virginica")
+                 ) ) ))
+```
+
