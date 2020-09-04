@@ -1,0 +1,172 @@
+---
+title: "Capstone Project_Predict Words"
+author: "Mahendra S Payaal"
+date: "9/4/2020"
+output: ioslides_presentation
+---
+
+## Project Outline
+
+-  The project predicts next word(s) like in swiftkey
+-  Input: one to any number of words
+-  Prediction model is based on bigram, trigram and 4-gram
+-  The model searches from 4-gram data set to bigrams
+-  To improve accuracy upto three options are proposed
+-  The project is hosted at 
+   https://mspayaal.shinyapps.io/Capstone_Word_Prediction/
+-  Response is instantaneous
+
+   
+## Prediction model features
+- Prediction model is based on ngrams
+- The search for match begins with quadgrams
+- If match is found, the prediction is displayed
+- If not, the search goes to trigrams and bigrams
+- Thus a prediction is mostly available 
+- accuracy: large database and upto 3 options  
+- code at https://github.com/mspayaal/datasciencecoursera/blob/master/PredictModelCapstone.R
+
+## Prediction code example
+```{r prediction_code,echo=FALSE,warning=FALSE,message=FALSE}
+library(stringr)
+library(stringi)
+library(dplyr)
+
+bigram <-  readRDS( "C:/Users/mahendra.payaal/Documents/coursera/data/bigram.rds")
+trigram <- readRDS("C:/Users/mahendra.payaal/Documents/coursera/data/trigram.rds")
+quadgram <- readRDS("C:/Users/mahendra.payaal/Documents/coursera/data/quadgram.rds")
+
+predictWord <- function(x){
+phrase<- as.character()
+  phrase <- x
+  phrase <- tolower(x)
+  phrase <- phrase %>%
+    str_remove_all(" ?(f|ht)(tp)(s?)(://)(.*)[.|/](.*)") %>%
+    str_replace_all("&amp;", "and") %>%
+    str_remove_all("^RT:? ") %>%
+    str_remove_all("@[[:alnum:]]+") %>%
+    str_remove_all("#[[:alnum:]]+") %>%
+    str_replace_all("\\\n", " ")
+  phrase <- unlist(strsplit(phrase," "))
+  num_words <- length(phrase)
+
+  if (num_words == 0){
+    print("No input provided")
+}
+
+  if (num_words == 1){
+    phrase <- paste0("^",phrase)
+    predict_1_word(phrase)
+    
+        }
+  else if (num_words == 2){
+    phrase <- paste(phrase[1],phrase[2])
+    phrase <- paste0("^",phrase)
+    predict_2_word(phrase)
+  } 
+  
+  else if (num_words == 3){
+    phrase <- paste(phrase[1],phrase[2],phrase[3])
+    phrase <- paste0("^",phrase)
+    predict_3_word(phrase)
+    
+  } else {
+    phrase <- paste(phrase[num_words-2],phrase[num_words -1],phrase[num_words])
+    phrase <- paste0("^",phrase)
+    predict_3_word(phrase)
+  }
+  
+}
+
+predict_1_word <- function(x){
+    match_list_2 <- bigram[grep(x,bigram[,1]),]
+    
+    if (nrow(match_list_2) == 0){ 
+      print("no match")
+      } 
+    
+      else if(nrow(match_list_2) == 1) { 
+        nextword_2 <- stri_extract_last_words(match_list_2[1,1])
+        print(nextword_2)
+          }
+      else if(nrow(match_list_2) == 2) { 
+           nextword_2_1 <-      stri_extract_last_words(match_list_2[1,1])
+           nextword_2_2 <- stri_extract_last_words(match_list_2[2,1])
+           nextword_2 <- paste(nextword_2_1,nextword_2_2,sep=",")
+           print(nextword_2)
+      } else {
+        nextword_2_1 <- stri_extract_last_words(match_list_2[1,1])
+        nextword_2_2 <- stri_extract_last_words(match_list_2[2,1])
+        nextword_2_3 <- stri_extract_last_words(match_list_2[3,1])
+        nextword_2 <- paste(nextword_2_1,nextword_2_2,nextword_2_3,",")
+        print(nextword_2)
+          }
+}
+
+predict_2_word <- function(x){
+  match_list_3 <- trigram[grep(x,trigram[,1]),]
+          if(nrow(match_list_3) == 0){
+          phrase_temp_1  <- unlist(strsplit(x," ")) 
+          phrase_1 <- paste0("^",phrase_temp_1[2])
+          predict_1_word(phrase_1)
+      
+      } 
+      
+      else if(nrow(match_list_3) == 1) { 
+        nextword_3 <- stri_extract_last_words(match_list_3[1,1])
+        print(nextword_3)
+      }
+      else if(nrow(match_list_3) == 2) { 
+    nextword_3_1 <- stri_extract_last_words(match_list_3[1,1])
+    nextword_3_2 <- stri_extract_last_words(match_list_3[2,1])
+    nextword_3 <- paste(nextword_3_1,nextword_3_2,sep=",")
+    print(nextword_3)
+  } else {
+    nextword_3_1 <- stri_extract_last_words(match_list_3[1,1])
+    nextword_3_2 <- stri_extract_last_words(match_list_3[2,1])
+    nextword_3_3 <- stri_extract_last_words(match_list_3[3,1])
+    nextword_3 <- paste(nextword_3_1,nextword_3_2,nextword_3_3,sep=",")
+    print(nextword_3)
+  }
+    }
+       
+predict_3_word <- function(x){
+     match_list_4 <- quadgram[grep(x,quadgram[,1]),]
+     
+    if(nrow(match_list_4) == 0){
+      phrase_temp  <- unlist(strsplit(x," ")) 
+      phrase_2 <- paste(phrase_temp[2],phrase_temp[3],sep=" ")
+      phrase_2  <- paste0("^",phrase_2)
+      predict_2_word(phrase_2)
+    
+    } 
+    
+   else if(nrow(match_list_4) == 1) { 
+      nextword_4 <- stri_extract_last_words(match_list_4[1,1])
+      print(nextword_4)
+    }
+   else if(nrow(match_list_4) == 2) { 
+     nextword_4_1 <- stri_extract_last_words(match_list_4[1,1])
+     nextword_4_2 <- stri_extract_last_words(match_list_4[2,1])
+     nextword_4 <- paste(nextword_4_1,nextword_4_2,sep=",")
+     print(nextword_4)
+   } else {
+     nextword_4_1 <- stri_extract_last_words(match_list_4[1,1])
+     nextword_4_2 <- stri_extract_last_words(match_list_4[2,1])
+     nextword_4_3 <- stri_extract_last_words(match_list_4[3,1])
+     nextword_4 <- paste(nextword_4_1,nextword_4_2,nextword_4_3,sep=",")
+     print(nextword_4)
+   }
+}
+
+```
+
+- predicting on an input
+- "Every inch of you is perfect from the bottom to the"
+```{r prediction}
+predictWord("Every inch of you is perfect from the bottom to the") 
+```
+- The data cleaning milestone report can be seen at 
+  https://www.rpubs.com/mspayaal/653458
+- 5% of all three files taken - blogs,news and tweets
+- 4gram, trigram and bigram created for prediction
